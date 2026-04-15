@@ -1,0 +1,229 @@
+@import "tailwindcss";
+
+/* ── Design tokens ─────────────────────────────── */
+:root {
+  --bg:          #0d1117;
+  --bg-card:     #161b22;
+  --bg-card-hover: #1c2333;
+  --bg-input:    #0d1117;
+  --border:      #30363d;
+  --border-focus:#58a6ff;
+  --text:        #e6edf3;
+  --text-muted:  #8b949e;
+  --text-dim:    #484f58;
+  --accent:      #4fd1c5;
+  --accent-dim:  #2c7a7b;
+  --accent-soft: rgba(79,209,197,0.10);
+  --code-bg:     #161b22;
+  --tag-bg:      rgba(79,209,197,0.08);
+  --radius:      10px;
+  --radius-sm:   6px;
+  --shadow:      0 1px 3px rgba(0,0,0,0.4);
+}
+
+[data-theme="light"] {
+  --bg:          #f6f8fa;
+  --bg-card:     #ffffff;
+  --bg-card-hover: #f0f4f8;
+  --bg-input:    #ffffff;
+  --border:      #d0d7de;
+  --border-focus:#0969da;
+  --text:        #1f2328;
+  --text-muted:  #57606a;
+  --text-dim:    #b0b7bf;
+  --accent:      #0969da;
+  --accent-dim:  #0550ae;
+  --accent-soft: rgba(9,105,218,0.08);
+  --code-bg:     #f6f8fa;
+  --tag-bg:      rgba(9,105,218,0.07);
+}
+
+/* ── Reset ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* ── Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-dim); }
+
+/* ── Focus ─────────────────────────────────────── */
+:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; border-radius: 4px; }
+
+/* ── Links ─────────────────────────────────────── */
+a { color: inherit; text-decoration: none; transition: opacity 0.15s; }
+
+/* ── Prose (Markdown rendered) ─────────────────── */
+.prose-devops { font-size: 14px; }
+
+.prose-devops h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+  margin: 2.5rem 0 1rem;
+  letter-spacing: -0.01em;
+}
+.prose-devops h2:first-child { margin-top: 0; }
+
+.prose-devops h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 1.8rem 0 0.5rem;
+}
+
+.prose-devops p {
+  color: var(--text-muted);
+  line-height: 1.75;
+  margin-bottom: 0.9rem;
+}
+
+.prose-devops pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1.1rem 1.25rem;
+  overflow-x: auto;
+  margin-bottom: 1.4rem;
+  position: relative;
+}
+
+.prose-devops code {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace;
+  font-size: 0.82rem;
+  line-height: 1.75;
+  color: #cdd6f4;
+}
+
+/* comment lines in bash */
+.prose-devops pre code { color: #c9d1d9; }
+
+.prose-devops ul {
+  list-style: disc;
+  padding-left: 1.4rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+.prose-devops li { margin-bottom: 0.2rem; }
+
+.prose-devops strong { color: var(--text); font-weight: 600; }
+.prose-devops em { color: var(--text-muted); }
+
+/* ── Animations ────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeIn 0.25s ease both; }
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--border) 25%, var(--bg-card) 50%, var(--border) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Sidebar responsive ─── */
+@media (min-width: 1024px) {
+  .lg-sidebar { display: block !important; }
+}
+
+/* ── Prose light mode ───── */
+[data-theme="light"] .prose-devops code { color: #24292e; }
+[data-theme="light"] .prose-devops pre  { background: #f6f8fa; }
+[data-theme="light"] .prose-devops h2   { color: var(--accent); }
+
+/* ── GitHub link ── */
+.gh-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.gh-link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* ── Detail page nav ── */
+.back-link {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  transition: all 0.15s;
+}
+.back-link:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+
+/* ── ToC links ── */
+.toc-link {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 3px 8px;
+  border-radius: 4px;
+  transition: background 0.1s, color 0.1s;
+  line-height: 1.4;
+}
+.toc-link:hover { background: var(--accent-soft); color: var(--accent); opacity: 1; }
+.toc-link[data-level="2"] { color: var(--accent); font-weight: 600; font-size: 0.8rem; }
+.toc-link[data-level="3"] { padding-left: 16px; font-size: 0.75rem; }
+
+/* ── Highlight.js — dark theme custom ─────────── */
+.hljs-comment,
+.hljs-quote        { color: #6272a4; font-style: italic; }
+.hljs-keyword,
+.hljs-selector-tag { color: #ff79c6; font-weight: 600; }
+.hljs-string,
+.hljs-attr         { color: #f1fa8c; }
+.hljs-number,
+.hljs-literal      { color: #bd93f9; }
+.hljs-built_in,
+.hljs-name         { color: #50fa7b; }
+.hljs-variable,
+.hljs-template-variable { color: #ff5555; }
+.hljs-type,
+.hljs-class        { color: #8be9fd; }
+.hljs-title        { color: #ffb86c; font-weight: 600; }
+.hljs-section      { color: #ff79c6; }
+.hljs-meta         { color: #6272a4; }
+.hljs-params       { color: #ffb86c; }
+.hljs-deletion     { color: #ff5555; }
+.hljs-addition     { color: #50fa7b; }
+.hljs-emphasis     { font-style: italic; }
+.hljs-strong       { font-weight: 700; }
+
+/* light mode hljs overrides */
+[data-theme="light"] .hljs-comment  { color: #6b7280; }
+[data-theme="light"] .hljs-keyword  { color: #7c3aed; }
+[data-theme="light"] .hljs-string   { color: #065f46; }
+[data-theme="light"] .hljs-number   { color: #7c3aed; }
+[data-theme="light"] .hljs-built_in { color: #0369a1; }
+[data-theme="light"] .hljs-title    { color: #92400e; }
+[data-theme="light"] .hljs-type     { color: #0369a1; }
+
+/* ── ToC sidebar hover ─────────────────────────── */
+.lg-sidebar a:hover { color: var(--accent) !important; }
