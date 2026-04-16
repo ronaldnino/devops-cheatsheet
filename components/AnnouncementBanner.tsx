@@ -74,7 +74,7 @@ export default function AnnouncementBanner() {
             borderRadius: "16px", padding: "16px 20px",
           }}>
             <Image
-              src="/isotipo.png"
+              src="isotipo.png"
               alt="Ronald Niño"
               width={100} height={56}
               style={{ objectFit: "contain", display: "block" }}
@@ -188,7 +188,7 @@ export default function AnnouncementBanner() {
               borderRadius: "10px", padding: "10px 16px",
             }}>
               <Image
-                src="/isotipo.png" alt="Ronald Niño"
+                src="isotipo.png" alt="Ronald Niño"
                 width={28} height={16}
                 style={{ objectFit: "contain" }}
               />
