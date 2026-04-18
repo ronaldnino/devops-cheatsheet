@@ -9,9 +9,10 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  // En producción (GitHub Pages) los assets viven en /devops-cheatsheet/
-  basePath: isProd ? `/${repoName}` : "",
-  assetPrefix: isProd ? `/${repoName}/` : "",
+  // Al usar un dominio personalizado (custom domain), el sitio se sirve en la raíz (/)
+  // por lo tanto ya no necesitamos basePath ni assetPrefix.
+  // basePath: isProd ? `/${repoName}` : "",
+  // assetPrefix: isProd ? `/${repoName}/` : "",
 };
 
 export default nextConfig;
