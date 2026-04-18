@@ -6,243 +6,231 @@ icon: ⛵
 category: orchestration
 tags: [helm, kubernetes, k8s, packages, devops]
 level: intermediate
+tips:
+  - type: tip
+    text: Usa --dry-run antes de instalar o actualizar para ver qué recursos se crearán
+  - type: warning
+    text: Cuidado al usar --force en un upgrade, ya que reemplaza recursos y puede causar downtime
+  - type: info
+    text: Los valores pasados con --set tienen mayor prioridad que los del archivo values.yaml
+  - type: success
+    text: Siempre guarda tu archivo values.yaml personalizado en control de versiones
 ---
 
 ## Comandos esenciales
 
+### Repositorios y búsquedas
+
 ```bash
-# Agregar repositorio
+# Basic repository management
 helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo add stable https://charts.helm.sh/stable
+helm repo update                           # Update local index
+helm repo list                             # List configured repos
+helm search repo nginx                     # Search in local repos
+helm search hub wordpress                  # Search in Artifact Hub
+```
 
-# Actualizar repositorios
+```bash
+# Detailed example — adding and updating multiple repositories
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
-
-# Listar repositorios
-helm repo list
-
-# Buscar chart en repositorios
-helm search repo nginx
-
-# Buscar en Artifact Hub
-helm search hub wordpress
 ```
 
 ## Instalar y gestionar releases
 
+### Instalación básica y configuración
+
 ```bash
-# Instalar chart con nombre de release
-helm install mi-nginx bitnami/nginx
+# Basic installation
+helm install my-app bitnami/nginx          # Install with auto-generated name
+helm install my-app bitnami/nginx -n prod  # Install in specific namespace
+helm install my-app bitnami/nginx --create-namespace -n prod
 
-# Instalar en namespace específico (crea namespace si no existe)
-helm install mi-app bitnami/nginx \
-  --namespace produccion \
-  --create-namespace
+# Configuration
+helm install my-app bitnami/nginx --set replicaCount=3
+helm install my-app bitnami/nginx -f values.yaml
 
-# Instalar con valores personalizados
-helm install mi-app bitnami/nginx \
-  --set replicaCount=3 \
-  --set service.type=ClusterIP
+# Release management
+helm list                                  # List releases in current namespace
+helm list -A                               # List releases across all namespaces
+helm status my-app                         # Show status of release
+helm get values my-app                     # Show user-supplied values
+```
 
-# Instalar con archivo de valores
-helm install mi-app bitnami/nginx \
-  -f valores-prod.yaml
-
-# Instalar versión específica del chart
-helm install mi-app bitnami/nginx --version 13.2.0
-
-# Ver releases instalados
-helm list
-helm list -A           # todos los namespaces
-helm list -n produccion
-
-# Ver estado de un release
-helm status mi-app
-helm status mi-app -n produccion
-
-# Ver valores actuales de un release
-helm get values mi-app
-helm get values mi-app --all
+```bash
+# Detailed example — production installation
+helm install my-prod-db bitnami/postgresql \
+  --namespace database \
+  --create-namespace \
+  --version 12.1.5 \
+  -f custom-values.yaml \
+  --set global.postgresql.auth.postgresPassword=supersecret \
+  --wait \
+  --timeout 10m
 ```
 
 ## Actualizar y rollback
 
+### Upgrades y desinstalación
+
 ```bash
-# Actualizar release con nuevos valores
-helm upgrade mi-app bitnami/nginx \
-  --set replicaCount=5
+# Upgrading
+helm upgrade my-app bitnami/nginx --set image.tag=1.19.2
+helm upgrade my-app bitnami/nginx -f new-values.yaml
 
-# Upgrade con archivo de valores
-helm upgrade mi-app bitnami/nginx -f valores-prod.yaml
+# Idempotent install/upgrade
+helm upgrade --install my-app bitnami/nginx -f values.yaml
 
-# Instalar si no existe, actualizar si existe
-helm upgrade --install mi-app bitnami/nginx \
-  -f valores-prod.yaml \
-  --namespace produccion \
-  --create-namespace
+# History and Rollback
+helm history my-app                        # View release history
+helm rollback my-app                       # Rollback to previous version
+helm rollback my-app 2                     # Rollback to specific revision
 
-# Ver historial de revisiones
-helm history mi-app
+# Uninstalling
+helm uninstall my-app
+helm uninstall my-app --keep-history       # Remove resources but keep release record
+```
 
-# Rollback a revisión anterior
-helm rollback mi-app
+```bash
+# Detailed example — safe upgrade process
+# 1. Preview changes
+helm diff upgrade my-app bitnami/nginx -f values.yaml
 
-# Rollback a revisión específica
-helm rollback mi-app 2
+# 2. Perform upgrade and wait for ready state
+helm upgrade my-app bitnami/nginx \
+  -f values.yaml \
+  --atomic \
+  --timeout 5m
 
-# Desinstalar release
-helm uninstall mi-app
-helm uninstall mi-app --keep-history  # mantiene historial
+# 3. If it fails, --atomic will automatically rollback
 ```
 
 ## Inspeccionar charts
 
+### Dry-run y valores por defecto
+
 ```bash
-# Ver información del chart
-helm show chart bitnami/nginx
-helm show readme bitnami/nginx
+# Inspecting chart contents
+helm show chart bitnami/nginx              # View Chart.yaml
+helm show readme bitnami/nginx             # View README
+helm show values bitnami/nginx             # View default values.yaml
+helm show all bitnami/nginx                # View all of the above
 
-# Ver valores por defecto del chart
-helm show values bitnami/nginx
+# Dry runs and templating
+helm install my-app bitnami/nginx --dry-run
+helm template my-app bitnami/nginx -f values.yaml # Render manifests locally
+```
 
-# Ver todos los manifests que se generarán (dry-run)
-helm install mi-app bitnami/nginx --dry-run
+```bash
+# Detailed example — extracting defaults for customization
+# Save default values to a file to modify them
+helm show values bitnami/nginx > my-values.yaml
 
-# Renderizar templates localmente (sin instalar)
-helm template mi-app bitnami/nginx -f valores.yaml
-
-# Verificar chart (lint)
-helm lint ./mi-chart/
+# Edit my-values.yaml, then install with it
+helm install my-custom-nginx bitnami/nginx -f my-values.yaml
 ```
 
 ## Crear charts propios
 
-```bash
-# Crear estructura de chart
-helm create mi-chart
+### Estructura base
 
-# Estructura generada:
-# mi-chart/
-#   Chart.yaml          → metadatos del chart
-#   values.yaml         → valores por defecto
-#   charts/             → dependencias
-#   templates/
-#     deployment.yaml
-#     service.yaml
-#     ingress.yaml
-#     _helpers.tpl       → funciones reutilizables
-#     NOTES.txt          → mensaje post-instalación
+```bash
+# Chart creation
+helm create my-chart                       # Scaffold new chart
+helm lint ./my-chart                       # Validate chart structure
 ```
 
 ```yaml
+# Detailed example — Chart.yaml and values.yaml structure
 # Chart.yaml
 apiVersion: v2
-name: mi-chart
-description: Mi aplicación en Kubernetes
+name: my-chart
+description: A Helm chart for Kubernetes
 type: application
-version: 0.1.0        # versión del chart
-appVersion: "1.0.0"   # versión de la app
-
+version: 0.1.0
+appVersion: "1.16.0"
 dependencies:
   - name: postgresql
-    version: "12.x.x"
+    version: 12.1.5
     repository: https://charts.bitnami.com/bitnami
-    condition: postgresql.enabled
 ```
 
-```yaml
-# values.yaml
-replicaCount: 1
-
-image:
-  repository: mi-imagen
-  tag: "latest"
-  pullPolicy: IfNotPresent
-
-service:
-  type: ClusterIP
-  port: 80
-
-ingress:
-  enabled: false
-  host: mi-app.ejemplo.com
-
-resources:
-  limits:
-    cpu: 500m
-    memory: 256Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
-
-postgresql:
-  enabled: true
-  auth:
-    database: miapp
-```
+### Plantillas (Templates)
 
 ```yaml
-# templates/deployment.yaml
+# templates/deployment.yaml (Basic)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "mi-chart.fullname" . }}
-  labels:
-    {{- include "mi-chart.labels" . | nindent 4 }}
+  name: {{ include "my-chart.fullname" . }}
+```
+
+```yaml
+# Detailed example — deployment.yaml template snippet
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "my-chart.fullname" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
-  selector:
-    matchLabels:
-      {{- include "mi-chart.selectorLabels" . | nindent 6 }}
   template:
-    metadata:
-      labels:
-        {{- include "mi-chart.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          ports:
-            - containerPort: {{ .Values.service.port }}
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          env:
-            - name: DB_HOST
-              value: {{ include "mi-chart.fullname" . }}-postgresql
 ```
 
 ## Empaquetar y publicar
 
+### Package & Push
+
 ```bash
-# Empaquetar chart como .tgz
-helm package mi-chart/
+# Packaging
+helm package ./my-chart                    # Creates my-chart-0.1.0.tgz
+helm package ./my-chart --sign --key "my-key" # Sign the package
 
-# Con firma GPG
-helm package mi-chart/ --sign --key 'mi-clave'
+# Publishing to registry (OCI)
+helm push my-chart-0.1.0.tgz oci://ghcr.io/my-org/charts
 
-# Publicar en GitHub Pages (OCI)
-helm push mi-chart-0.1.0.tgz oci://ghcr.io/usuario/charts
+# Publishing to HTTP repository
+helm repo index ./charts/ --url https://my-org.github.io/charts
+```
 
-# Generar índice para repositorio HTTP
-helm repo index ./charts/ --url https://usuario.github.io/charts
+```bash
+# Detailed example — full packaging and pushing workflow
+export HELM_EXPERIMENTAL_OCI=1
 
-# Instalar desde OCI registry
-helm install mi-app oci://ghcr.io/usuario/charts/mi-chart --version 0.1.0
+# Authenticate to registry
+echo $CR_PAT | helm registry login ghcr.io -u my-user --password-stdin
+
+# Package and push
+helm package ./my-chart
+helm push my-chart-0.1.0.tgz oci://ghcr.io/my-org/charts
+
+# Install from OCI
+helm install my-app oci://ghcr.io/my-org/charts/my-chart --version 0.1.0
 ```
 
 ## Plugins útiles
 
+### Gestión de plugins
+
 ```bash
-# Instalar plugin
+# Plugin management
+helm plugin install <url>                  # Install a plugin
+helm plugin list                           # List installed plugins
+helm plugin update <name>                  # Update a plugin
+helm plugin uninstall <name>               # Uninstall a plugin
+```
+
+```bash
+# Detailed example — essential plugins
+# helm-diff: View differences before upgrade
 helm plugin install https://github.com/databus23/helm-diff
+helm diff upgrade my-app bitnami/nginx -f new-values.yaml
 
-# Ver diferencias antes de upgrade
-helm diff upgrade mi-app bitnami/nginx -f valores.yaml
-
-# Plugin para secretos con SOPS
+# helm-secrets: Manage secrets using Mozilla SOPS
 helm plugin install https://github.com/jkroepke/helm-secrets
-
-# Listar plugins instalados
-helm plugin list
+helm secrets upgrade my-app ./chart -f secrets.yaml
 ```

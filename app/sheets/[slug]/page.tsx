@@ -77,7 +77,7 @@ export default async function SheetPage({ params }: Props) {
         }}>
           <Link href="/" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <Image
-              src="isotipo.png"
+              src="/isotipo.png"
               alt="Ronald Niño"
               width={28}
               height={28}
@@ -147,7 +147,7 @@ export default async function SheetPage({ params }: Props) {
               display: "flex", alignItems: "center", gap: "8px",
             }}>
               <Image
-                src="isotipo.png"
+                src="/isotipo.png"
                 alt="Ronald Niño"
                 width={24}
                 height={14}
@@ -243,7 +243,7 @@ export default async function SheetPage({ params }: Props) {
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <Image
-              src="isotipo.png"
+              src="/isotipo.png"
               alt="Ronald Niño"
               width={32}
               height={18}
