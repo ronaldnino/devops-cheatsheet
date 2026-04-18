@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" data-theme="dark">
+    <html lang="es" data-theme="dark" suppressHydrationWarning>
       <head>
         {/* Evitar flash de tema incorrecto */}
         <script dangerouslySetInnerHTML={{ __html: `

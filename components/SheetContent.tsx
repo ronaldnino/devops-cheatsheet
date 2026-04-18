@@ -217,9 +217,7 @@ export default function SheetContent({
               fontSize: "1.3rem", fontWeight: 800,
               color: "var(--text)", margin: 0,
               letterSpacing: "-0.02em",
-            }}>
-              {sec.h2}
-            </h2>
+            }} dangerouslySetInnerHTML={{ __html: sec.h2 }} />
           </div>
 
           {/* H3 subsections */}
@@ -235,7 +233,7 @@ export default function SheetContent({
                   borderRadius: "50%", background: "var(--accent)",
                   flexShrink: 0,
                 }} />
-                {sub.h3}
+                <span dangerouslySetInnerHTML={{ __html: sub.h3 }} />
               </h3>
               <SubsectionTabs sub={sub} />
             </div>

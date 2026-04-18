@@ -103,7 +103,8 @@ a { color: inherit; text-decoration: none; transition: opacity 0.15s; }
   font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace;
   font-size: 0.82rem;
   line-height: 1.75;
-  color: #cdd6f4;
+  /* Color base vibrante (Cyan) para que comandos como 'helm' o 'docker' destaquen del texto plano */
+  color: #8be9fd; 
 }
 
 /* comment lines in bash */
@@ -144,8 +145,9 @@ a { color: inherit; text-decoration: none; transition: opacity 0.15s; }
 }
 
 /* ── Prose light mode ───── */
-[data-theme="light"] .prose-devops code { color: #24292e; }
-[data-theme="light"] .prose-devops pre  { background: #f6f8fa; }
+/* Color base azul oscuro vibrante para comandos principales en modo claro */
+[data-theme="light"] .prose-devops code { color: #005cc5; }
+[data-theme="light"] .prose-devops pre  { background: #f6f8fa; border-color: #d0d7de; }
 [data-theme="light"] .prose-devops h2   { color: var(--accent); }
 
 /* ── GitHub link ── */
@@ -216,14 +218,27 @@ a { color: inherit; text-decoration: none; transition: opacity 0.15s; }
 .hljs-emphasis     { font-style: italic; }
 .hljs-strong       { font-weight: 700; }
 
-/* light mode hljs overrides */
-[data-theme="light"] .hljs-comment  { color: #6b7280; }
-[data-theme="light"] .hljs-keyword  { color: #7c3aed; }
-[data-theme="light"] .hljs-string   { color: #065f46; }
-[data-theme="light"] .hljs-number   { color: #7c3aed; }
-[data-theme="light"] .hljs-built_in { color: #0369a1; }
-[data-theme="light"] .hljs-title    { color: #92400e; }
-[data-theme="light"] .hljs-type     { color: #0369a1; }
+/* light mode hljs overrides (Modern Light Theme) */
+[data-theme="light"] .hljs-comment,
+[data-theme="light"] .hljs-quote        { color: #6a737d; font-style: italic; }
+[data-theme="light"] .hljs-keyword,
+[data-theme="light"] .hljs-selector-tag { color: #d73a49; font-weight: 600; }
+[data-theme="light"] .hljs-string,
+[data-theme="light"] .hljs-attr         { color: #032f62; } /* Atributos de YAML legibles */
+[data-theme="light"] .hljs-number,
+[data-theme="light"] .hljs-literal      { color: #005cc5; }
+[data-theme="light"] .hljs-built_in,
+[data-theme="light"] .hljs-name         { color: #6f42c1; }
+[data-theme="light"] .hljs-variable,
+[data-theme="light"] .hljs-template-variable { color: #e36209; }
+[data-theme="light"] .hljs-type,
+[data-theme="light"] .hljs-class        { color: #6f42c1; }
+[data-theme="light"] .hljs-title        { color: #6f42c1; font-weight: 600; }
+[data-theme="light"] .hljs-section      { color: #005cc5; font-weight: 600; }
+[data-theme="light"] .hljs-meta         { color: #24292e; }
+[data-theme="light"] .hljs-params       { color: #24292e; }
+[data-theme="light"] .hljs-deletion     { color: #b31d28; }
+[data-theme="light"] .hljs-addition     { color: #22863a; }
 
 /* ── ToC sidebar hover ─────────────────────────── */
 .lg-sidebar a:hover { color: var(--accent) !important; }
